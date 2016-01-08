@@ -2,6 +2,11 @@ import sys
 import json
 import uu
 
+
+import sys
+import json
+import uu
+
 #def uprint(*objects, sep=' ', end='\n', file=sys.stdout):
 #    enc = file.encoding
 #    if enc == 'UTF-8':
@@ -16,18 +21,9 @@ def dprint(dstr):
         print(dstr)
 
 
-def hw():
-    afinnfile = open(sys.argv[1])
-    dprint('Hello, world!')
-    scores = {} # initialize an empty dictionary
-    for line in afinnfile:
-        dprint(line)
-        term, score  = line.split("\t")  # The file is tab-delimited. "\t" means "tab character"
-        scores[term] = int(score)  # Convert the score to an integer.
+def hw(tweetfile):
+    new_scores = {}
 
-    dprint(scores.items()) # Print every (term, score) pair in the dictionary
-
-    tweetfile = open(sys.argv[2])
     for line in tweetfile:
         line_score = 0
         dprint(line)
@@ -37,13 +33,28 @@ def hw():
         dprint(json_line)
         if ('text' in json_line):
             dprint(json_line['text'].encode('ascii', 'ignore'))
+            #for word in json_line['text'].split((' ')):
+            #    dprint(word.encode('ascii', 'ignore'))
+            #    dprint('--------------------')
+            #    if(word in scores.keys()):
+            #        line_score = line_score + scores[word]
+
             for word in json_line['text'].split((' ')):
                 dprint(word.encode('ascii', 'ignore'))
                 dprint('--------------------')
-                if(word in scores.keys() and word != ""):
-                    line_score = line_score + scores[word]
-        else: dprint('no text')
-        print(line_score)
+                if word not in new_scores.keys():
+                    new_scores[word] = 1
+                    #print new_scores
+                else:
+                    new_scores[word] += 1
+    total = 0
+    for word in new_scores.keys():
+        total += new_scores[word]
+    for word in new_scores.keys():
+        print word.encode('ascii', errors='replace'),
+        print float(new_scores[word])/total
+        #else: dprint('no text')
+        #print(line_score)
 
 
 def lines(fp):
@@ -51,8 +62,7 @@ def lines(fp):
 
 def main():
     sent_file = open(sys.argv[1])
-    tweet_file = open(sys.argv[2])
-    hw()
+    hw(sent_file)
     #lines(sent_file)
     #lines(tweet_file)
 
